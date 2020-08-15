@@ -1,0 +1,8 @@
+server101 ansible_user=root
+server102 ansible_user=root
+drserver201 ansible_user=root
+
+[all]
+server101 ansible_user=root
+server102 ansible_user=root
+drserver201 ansible_user=root

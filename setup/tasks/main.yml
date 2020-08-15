@@ -1,0 +1,48 @@
+---
+# tasks file for setup
+
+- name: Update packages
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+
+- name: Clean-up old docker versions
+  yum:
+    name: 
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common
+      - docker-latest
+      - docker-latest-logrotate
+      - docker-logrotate
+      - docker-engine
+    state: removed
+
+- name: Install yum-utils
+  yum: 
+    name: yum-utils
+    state: present
+
+- name: Configure docker repo
+  command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+- name: Update packages from new docker repo
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+
+- name: Install docker
+  yum: 
+    name: 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+
+- name: Start docker
+  systemd:
+    name: docker
+    state: started
