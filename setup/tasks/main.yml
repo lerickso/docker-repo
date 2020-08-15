@@ -46,3 +46,11 @@
   systemd:
     name: docker
     state: started
+
+- name: Enable the support user to use docker
+  user:
+    name: support
+    groups: docker
+    append: yes
+
+    
