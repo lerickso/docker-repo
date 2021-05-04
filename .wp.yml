@@ -2,8 +2,8 @@
   tasks:
      - name: 'Add users'
        user:
-         name: ecook
-         comment: "Ed Cook"
+         name: luke.erickson
+         comment: "Ansible"
          groups: wheel
          password: "{{ '2fudge' | password_hash('sha512') }}"
 
