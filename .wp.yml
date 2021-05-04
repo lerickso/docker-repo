@@ -1,0 +1,79 @@
+- hosts: all
+  tasks:
+     - name: 'Add users'
+       user:
+         name: ecook
+         comment: "Ed Cook"
+         groups: wheel
+         password: "{{ '2fudge' | password_hash('sha512') }}"
+
+     - name: 'Upgrade packages'
+       dnf:
+         name: '*'
+         state: latest
+       become: root
+
+     - name: 'Install Docker Py'
+       yum:
+         name: "{{ item }}"
+       loop:
+         - python-docker-py.noarch
+       become: root
+
+     - name: "Create Network dbnet"
+       docker_network:
+         name: dbnet
+
+     - name: "Create Network frontend"
+       docker_network:
+         name: frontend
+
+
+     - name: "Pull Wordpress Docker Container"
+       docker_image:
+         name: wordpress
+         source: pull
+
+     - name: "Pull Mariadb Docker Container"
+       docker_image:
+         name: mariadb
+         source: pull
+
+     - name: "Start Mariadb Container"
+       docker_container:
+         name: mariadb-db
+         hostname: mariadb
+         image: mariadb
+         state: started
+         networks:
+           - name: dbnet
+         env:
+           MYSQL_ROOT_PASSWORD: 'abcPassword123'
+           MYSQL_DATABASE: wordpress
+           MYSQL_USER: wpdbuser
+           MYSQL_PASSWORD: 'password123'
+         volumes:
+           - /docker/mariadb:/var/lib/mysql
+         networks_cli_compatible: yes
+
+     - name: "Start Wordpress Container"
+       docker_container:
+         name: wordpress
+         hostname: wordpress
+         image: wordpress
+         state: started
+         networks:
+           - name: dbnet
+           - name: frontend
+         ports:
+           - "80:80"
+         env:
+           WORDPRESS_DB_HOST: mariadb:3306
+           WORDPRESS_DB_USER: wpdbuser
+           WORDPRESS_DB_PASSWORD: 'password123'
+           WORDPRESS_DB_NAME: wordpress
+           WORDPRESS_TABLE_PREFIX: wp
+         networks_cli_compatible: yes
+         volumes:
+           - /docker/wp:/var/www/html
+
