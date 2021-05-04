@@ -8,7 +8,7 @@
          password: "{{ '2fudge' | password_hash('sha512') }}"
 
      - name: 'Upgrade packages'
-       dnf:
+       yum:
          name: '*'
          state: latest
        become: root
