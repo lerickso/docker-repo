@@ -72,7 +72,7 @@
            WORDPRESS_DB_USER: wpdbuser
            WORDPRESS_DB_PASSWORD: 'password123'
            WORDPRESS_DB_NAME: wordpress
-           WORDPRESS_TABLE_PREFIX: wp
+           WORDPRESS_TABLE_PREFIX: wp_
          networks_cli_compatible: yes
          volumes:
            - /docker/wp:/var/www/html
